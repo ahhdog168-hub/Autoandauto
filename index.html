@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>FB Reels Auto</title>
+<style>
+body { font-family: Arial; margin: 20px; }
+input, button { margin-top: 10px; display: block; }
+pre { background: #f4f4f4; padding: 10px; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<h1>FB Reels Auto Uploader (10/day)</h1>
+
+<label>Facebook Page ID:</label>
+<input type="text" id="page_id">
+
+<label>Page Access Token:</label>
+<input type="text" id="page_token">
+
+<label>Description Prefix:</label>
+<input type="text" id="desc" value="Clip">
+
+<label>YouTube URL (optional):</label>
+<input type="text" id="youtube_url" placeholder="https://youtube.com/...">
+
+<label>OR Upload Video:</label>
+<input type="file" id="video" accept="video/*">
+
+<label>Optional Watermark (PNG/JPG):</label>
+<input type="file" id="watermark" accept="image/*">
+
+<button onclick="upload()">Process & Upload</button>
+<pre id="log"></pre>
+
+<script>
+async function upload() {
+    const formData = new FormData();
+    formData.append("page_id", document.getElementById("page_id").value);
+    formData.append("page_token", document.getElementById("page_token").value);
+    formData.append("description", document.getElementById("desc").value);
+    formData.append("youtube_url", document.getElementById("youtube_url").value);
+
+    if (document.getElementById("video").files.length > 0) {
+        formData.append("video", document.getElementById("video").files[0]);
+    }
+    if (document.getElementById("watermark").files.length > 0) {
+        formData.append("watermark", document.getElementById("watermark").files[0]);
+    }
+
+    document.getElementById("log").textContent = "Processing...";
+    const res = await fetch("/upload", { method: "POST", body: formData });
+    const text = await res.text();
+    document.getElementById("log").textContent = text;
+}
+</script>
+</body>
+</html>
